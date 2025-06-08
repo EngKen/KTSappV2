@@ -1,6 +1,17 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { API_BASE_URL } from "./config";
 
+// Get token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('auth_token');
+};
+
+// Add token to request headers
+const getAuthHeaders = (): Record<string, string> => {
+  const token = getAuthToken();
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+};
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -8,40 +19,47 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export async function apiRequest(
-  method: string,
-  url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
-  const fullUrl = `${API_BASE_URL}${url}`;
-  console.log('Making request to:', fullUrl); // Debug log
+export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
+  const url = `${API_BASE_URL}${endpoint}`;
+  console.log('Making API request to:', url);
+  console.log('Request options:', options);
 
-  const res = await fetch(fullUrl, {
-    method,
-    headers: {
-      ...(data ? { "Content-Type": "application/json" } : {}),
-      "Accept": "application/json",
-    },
-    body: data ? JSON.stringify(data) : undefined,
-    mode: "cors",
-    credentials: "include",
-  });
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(),
+        ...(options.headers || {}),
+      },
+      credentials: 'include',
+      mode: 'cors',
+    });
 
-  console.log('Response status:', res.status); // Debug log
-  const responseText = await res.text();
-  console.log('Response text:', responseText); // Debug log
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    
+    const responseText = await response.text();
+    console.log('Response text:', responseText);
 
-  if (!res.ok) {
-    throw new Error(`${res.status}: ${responseText}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}, text: ${responseText}`);
+    }
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      console.error('Failed to parse response as JSON:', e);
+      throw new Error('Invalid JSON response from server');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('API request failed:', error);
+    throw error;
   }
-
-  // Create a new Response with the text content
-  return new Response(responseText, {
-    status: res.status,
-    statusText: res.statusText,
-    headers: res.headers
-  });
-}
+};
 
 type UnauthorizedBehavior = "returnNull" | "throw";
 export const getQueryFn: <T>(options: {

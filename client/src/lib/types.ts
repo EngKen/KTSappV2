@@ -3,6 +3,7 @@ export interface User {
   name: string;
   accountNumber: string;
   phoneNumber: string;
+  serialNumber: string;
 }
 
 export interface PoolTable {
