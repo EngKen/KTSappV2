@@ -132,13 +132,21 @@ export class MemStorage implements IStorage {
   async getTransactionsByAccount(accountNumber: string): Promise<Transaction[]> {
     return Array.from(this.transactions.values())
       .filter((transaction) => transaction.accountNumber === accountNumber)
-      .sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime());
+      .sort((a, b) => {
+        const dateA = a.transactionDate ? new Date(a.transactionDate).getTime() : 0;
+        const dateB = b.transactionDate ? new Date(b.transactionDate).getTime() : 0;
+        return dateB - dateA;
+      });
   }
 
   async getWithdrawalsByAccount(accountNumber: string): Promise<Withdrawal[]> {
     return Array.from(this.withdrawals.values())
       .filter((withdrawal) => withdrawal.accountNumber === accountNumber)
-      .sort((a, b) => new Date(b.withdrawalDate).getTime() - new Date(a.withdrawalDate).getTime());
+      .sort((a, b) => {
+        const dateA = a.withdrawalDate ? new Date(a.withdrawalDate).getTime() : 0;
+        const dateB = b.withdrawalDate ? new Date(b.withdrawalDate).getTime() : 0;
+        return dateB - dateA;
+      });
   }
 
   async createWithdrawal(withdrawal: { accountNumber: string; amount: number }): Promise<Withdrawal> {

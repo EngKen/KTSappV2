@@ -30,6 +30,7 @@ export default function PoolTableDetailsModal({
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">{table.name} Details</DialogTitle>
+          <p className="sr-only">View detailed information about this pool table including performance metrics, location, and status</p>
         </DialogHeader>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

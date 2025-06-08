@@ -43,7 +43,7 @@ export const withdrawals = pgTable("withdrawals", {
   accountNumber: text("account_number").notNull(),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   status: text("status").notNull().default("completed"),
-  withdrawalDate: timestamp("withdrawal_date").defaultNow(),
+  withdrawalDate: timestamp("withdrawal_date").defaultNow().notNull(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({

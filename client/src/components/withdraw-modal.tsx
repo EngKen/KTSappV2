@@ -111,6 +111,7 @@ export default function WithdrawModal({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Withdraw Funds</DialogTitle>
+          <p className="sr-only">Withdraw funds from your pool table earnings balance</p>
         </DialogHeader>
         
         <div className="space-y-6">
