@@ -6,6 +6,9 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  name: text("name").notNull(),
+  email: text("email"),
+  phoneNumber: text("phone_number"),
 });
 
 export const poolTables = pgTable("pool_tables", {
@@ -46,9 +49,31 @@ export const withdrawals = pgTable("withdrawals", {
   withdrawalDate: timestamp("withdrawal_date").defaultNow().notNull(),
 });
 
+export const supportTickets = pgTable("support_tickets", {
+  id: serial("id").primaryKey(),
+  ticketId: text("ticket_id").notNull().unique(),
+  accountNumber: text("account_number").notNull(),
+  userEmail: text("user_email").notNull(),
+  subject: text("subject").notNull(),
+  message: text("message").notNull(),
+  status: text("status").notNull().default("open"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
+  name: true,
+  email: true,
+  phoneNumber: true,
+});
+
+export const insertSupportTicketSchema = createInsertSchema(supportTickets).omit({
+  id: true,
+  ticketId: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export const insertPoolTableSchema = createInsertSchema(poolTables).omit({
@@ -72,6 +97,8 @@ export type User = typeof users.$inferSelect;
 export type PoolTable = typeof poolTables.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
 export type Withdrawal = typeof withdrawals.$inferSelect;
+export type SupportTicket = typeof supportTickets.$inferSelect;
 export type InsertPoolTable = z.infer<typeof insertPoolTableSchema>;
 export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
 export type InsertWithdrawal = z.infer<typeof insertWithdrawalSchema>;
+export type InsertSupportTicket = z.infer<typeof insertSupportTicketSchema>;

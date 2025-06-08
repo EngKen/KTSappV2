@@ -1,4 +1,4 @@
-import { poolTables, transactions, withdrawals, users, type User, type InsertUser, type PoolTable, type Transaction, type Withdrawal } from "@shared/schema";
+import { poolTables, transactions, withdrawals, users, supportTickets, type User, type InsertUser, type PoolTable, type Transaction, type Withdrawal, type SupportTicket, type InsertSupportTicket } from "@shared/schema";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -7,7 +7,9 @@ export interface IStorage {
   getPoolTablesByAccount(accountNumber: string): Promise<PoolTable[]>;
   getTransactionsByAccount(accountNumber: string): Promise<Transaction[]>;
   getWithdrawalsByAccount(accountNumber: string): Promise<Withdrawal[]>;
-  createWithdrawal(withdrawal: { accountNumber: string; amount: number }): Promise<Withdrawal>;
+  createWithdrawal(withdrawal: { accountNumber: string; amount: number; password: string }): Promise<Withdrawal>;
+  createSupportTicket(ticket: InsertSupportTicket): Promise<SupportTicket>;
+  validateUserPassword(username: string, password: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -15,16 +17,20 @@ export class MemStorage implements IStorage {
   private poolTables: Map<string, PoolTable>;
   private transactions: Map<string, Transaction>;
   private withdrawals: Map<string, Withdrawal>;
+  private supportTickets: Map<string, SupportTicket>;
   private currentUserId: number;
   private currentDeviceId: number;
+  private currentTicketId: number;
 
   constructor() {
     this.users = new Map();
     this.poolTables = new Map();
     this.transactions = new Map();
     this.withdrawals = new Map();
+    this.supportTickets = new Map();
     this.currentUserId = 1;
     this.currentDeviceId = 1;
+    this.currentTicketId = 1;
     
     // Initialize with sample data
     this.initializeSampleData();
