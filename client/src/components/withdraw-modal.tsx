@@ -28,6 +28,8 @@ export default function WithdrawModal({
   accountNumber 
 }: WithdrawModalProps) {
   const [amount, setAmount] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
