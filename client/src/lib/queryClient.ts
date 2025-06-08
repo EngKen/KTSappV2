@@ -1,17 +1,6 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { API_BASE_URL } from "./config";
 
-// Get token from localStorage
-const getAuthToken = () => {
-  return localStorage.getItem('auth_token');
-};
-
-// Add token to request headers
-const getAuthHeaders = (): Record<string, string> => {
-  const token = getAuthToken();
-  return token ? { 'Authorization': `Bearer ${token}` } : {};
-};
-
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -29,8 +18,7 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        ...getAuthHeaders(),
-        ...(options.headers || {}),
+        ...options.headers,
       },
       credentials: 'include',
       mode: 'cors',

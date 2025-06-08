@@ -10,12 +10,12 @@ import {
 } from "./types";
 
 class PoolTableAPI {
-  async login(accountId: string, password: string): Promise<LoginResponse> {
+  async login(username: string, password: string): Promise<LoginResponse> {
     try {
-      console.log('Attempting login for account:', accountId);
+      console.log('Attempting login for user:', username);
       const response = await apiRequest('/login', {
         method: 'POST',
-        body: JSON.stringify({ accountId, password }),
+        body: JSON.stringify({ username, password }),
       });
       
       console.log('Login response:', response);
@@ -23,73 +23,55 @@ class PoolTableAPI {
       if (response.success) {
         return {
           success: true,
-          token: response.token,
-          user: {
-            id: response.user.id,
-            name: response.user.name,
-            accountNumber: response.user.accountNumber,
-            phoneNumber: response.user.phoneNumber,
-            serialNumber: response.user.serialNumber
-          }
+          user: response.user,
         };
       } else {
         return {
           success: false,
-          message: response.message || 'Login failed'
+          message: response.message || 'Login failed',
         };
       }
     } catch (error) {
       console.error('Login error:', error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'An unexpected error occurred'
+        message: error instanceof Error ? error.message : 'An unexpected error occurred',
       };
     }
   }
 
-  async getDashboardData(userId: number): Promise<DashboardData> {
-    const response = await apiRequest(`/users/${userId}`, {
+  async getDashboardData(): Promise<DashboardData> {
+    const response = await apiRequest('/dashboard', {
       method: 'GET',
     });
     return response;
   }
 
-  async getPoolTables(accountNumber: string): Promise<PoolTable[]> {
-    const response = await apiRequest(`/devices?account_no=${accountNumber}`, {
+  async getPoolTables(): Promise<PoolTable[]> {
+    const response = await apiRequest('/pool-tables', {
       method: 'GET',
     });
     return response;
   }
 
-  async getTransactions(deviceId: number, search?: string): Promise<Transaction[]> {
-    const url = search 
-      ? `/devices/${deviceId}/transactions?search=${encodeURIComponent(search)}`
-      : `/devices/${deviceId}/transactions`;
-    const response = await apiRequest(url, {
+  async getTransactions(): Promise<Transaction[]> {
+    const response = await apiRequest('/transactions', {
       method: 'GET',
     });
     return response;
   }
 
-  async getWithdrawals(accountNumber: string): Promise<Withdrawal[]> {
-    const response = await apiRequest(`/withdraw?account_no=${accountNumber}`, {
+  async getWithdrawals(): Promise<Withdrawal[]> {
+    const response = await apiRequest('/withdrawals', {
       method: 'GET',
     });
     return response;
   }
 
-  async requestWithdrawal(accountNumber: string, amount: number): Promise<WithdrawalResponse> {
-    const response = await apiRequest('/withdraw', {
+  async requestWithdrawal(amount: number): Promise<WithdrawalResponse> {
+    const response = await apiRequest('/withdrawals', {
       method: 'POST',
-      body: JSON.stringify({ accountNo: accountNumber, amount }),
-    });
-    return response;
-  }
-
-  async updateDeviceInfo(deviceId: number, data: Partial<PoolTable>): Promise<PoolTable> {
-    const response = await apiRequest(`/devices/${deviceId}`, {
-      method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({ amount }),
     });
     return response;
   }
