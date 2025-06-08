@@ -48,8 +48,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-blue-600 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-white shadow-lg">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <img src={logoPath} alt="Kentronics Solutions" className="w-16 h-16" />
@@ -88,7 +88,7 @@ export default function Login() {
             
             <Button 
               type="submit" 
-              className="w-full"
+              className="w-full bg-blue-600 hover:bg-blue-700"
               disabled={isLoading}
             >
               {isLoading ? "Signing In..." : "Sign In"}
@@ -102,7 +102,7 @@ export default function Login() {
               </p>
               <a 
                 href="mailto:support@kentronicssolutions.com" 
-                className="text-xs text-primary hover:underline"
+                className="text-xs text-blue-600 hover:underline"
               >
                 support@kentronicssolutions.com
               </a>

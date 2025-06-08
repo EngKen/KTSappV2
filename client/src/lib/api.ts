@@ -10,11 +10,39 @@ import type {
 
 class PoolTableAPI {
   async login(accountId: string, password: string): Promise<LoginResponse> {
-    const response = await apiRequest("POST", "/login", {
-      accountId,
-      password
-    });
-    return response.json();
+    try {
+      const response = await apiRequest("POST", "/login", {
+        accountId,
+        password
+      });
+      const data = await response.json();
+      console.log('Login response:', data); // Debug log
+
+      // Handle WordPress REST API response format
+      if (data.success) {
+        return {
+          success: true,
+          token: data.token,
+          user: {
+            id: data.user.id,
+            name: data.user.name,
+            accountNumber: data.user.accountNumber,
+            phoneNumber: data.user.phoneNumber
+          }
+        };
+      } else {
+        return {
+          success: false,
+          message: data.message || "Login failed"
+        };
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Network error occurred"
+      };
+    }
   }
 
   async getDashboardData(userId: number): Promise<DashboardData> {
