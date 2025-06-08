@@ -18,9 +18,11 @@ export async function apiRequest(
     method,
     headers: {
       ...(data ? { "Content-Type": "application/json" } : {}),
-      "Accept": "application/json"
+      "Accept": "application/json",
+      "Access-Control-Allow-Origin": "*"
     },
     body: data ? JSON.stringify(data) : undefined,
+    mode: "cors",
     credentials: "include",
   });
 
@@ -38,8 +40,10 @@ export const getQueryFn: <T>(options: {
     const res = await fetch(fullUrl, {
       credentials: "include",
       headers: {
-        "Accept": "application/json"
-      }
+        "Accept": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      mode: "cors"
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

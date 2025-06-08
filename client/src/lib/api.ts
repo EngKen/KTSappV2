@@ -10,7 +10,7 @@ import type {
 
 class PoolTableAPI {
   async login(accountId: string, password: string): Promise<LoginResponse> {
-    const response = await apiRequest("POST", "/api/auth/login", {
+    const response = await apiRequest("POST", "/login", {
       accountId,
       password
     });
@@ -18,33 +18,34 @@ class PoolTableAPI {
   }
 
   async getDashboardData(userId: number): Promise<DashboardData> {
-    const response = await apiRequest("GET", `/api/users/${userId}/dashboard`);
+    const response = await apiRequest("GET", `/users/${userId}`);
     return response.json();
   }
 
   async getPoolTables(accountNumber: string): Promise<PoolTable[]> {
-    const response = await apiRequest("GET", `/api/pool-tables?account=${accountNumber}`);
+    const response = await apiRequest("GET", `/devices?account_no=${accountNumber}`);
     return response.json();
   }
 
   async getTransactions(accountNumber: string, search?: string, tableId?: string): Promise<Transaction[]> {
-    const params = new URLSearchParams({ account: accountNumber });
+    const params = new URLSearchParams({ account_no: accountNumber });
     if (search) params.append("search", search);
-    if (tableId) params.append("table", tableId);
+    if (tableId) params.append("device_id", tableId);
     
-    const response = await apiRequest("GET", `/api/transactions?${params}`);
+    const response = await apiRequest("GET", `/devices/${tableId}/transactions?${params}`);
     return response.json();
   }
 
   async getWithdrawals(accountNumber: string): Promise<Withdrawal[]> {
-    const response = await apiRequest("GET", `/api/withdrawals?account=${accountNumber}`);
+    const response = await apiRequest("GET", `/withdraw?account_no=${accountNumber}`);
     return response.json();
   }
 
-  async createWithdrawal(accountNumber: string, amount: number): Promise<WithdrawalResponse> {
-    const response = await apiRequest("POST", "/api/withdrawals", {
+  async createWithdrawal(accountNumber: string, amount: number, password: string): Promise<WithdrawalResponse> {
+    const response = await apiRequest("POST", "/withdraw", {
       accountNumber,
-      amount
+      amount,
+      password
     });
     return response.json();
   }
