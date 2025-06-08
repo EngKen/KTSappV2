@@ -95,10 +95,21 @@ export default function Login() {
             </Button>
           </form>
           
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-3">
             <p className="text-sm text-muted-foreground">
               Demo Account: ACC001 / password123
             </p>
+            <div className="pt-3 border-t border-border">
+              <p className="text-xs text-muted-foreground">
+                Need help? Contact us at
+              </p>
+              <a 
+                href="mailto:support@kentronicssolutions.com" 
+                className="text-xs text-primary hover:underline"
+              >
+                support@kentronicssolutions.com
+              </a>
+            </div>
           </div>
         </CardContent>
       </Card>

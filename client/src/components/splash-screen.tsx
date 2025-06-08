@@ -12,7 +12,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     const timer = setTimeout(() => {
       setIsVisible(false);
       setTimeout(onComplete, 300); // Allow fade out animation
-    }, 2500);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [onComplete]);
@@ -30,13 +30,18 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           <img 
             src={logoPath} 
             alt="Kentronics Solutions" 
-            className="w-32 h-32 mx-auto mb-4 object-contain"
+            className="w-32 h-32 mx-auto mb-4 object-contain animate-pulse"
           />
         </div>
-        <h1 className="text-3xl font-bold mb-2">Kentronics Solutions</h1>
-        <p className="text-xl opacity-90 mb-8">Pool Table Management</p>
-        <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p className="mt-4 text-sm opacity-75">Loading your dashboard...</p>
+        <h1 className="text-4xl font-bold mb-2">Welcome to Kentronics</h1>
+        <p className="text-xl opacity-90 mb-2">Pool Table Management System</p>
+        <p className="text-sm opacity-75 mb-8">Track your earnings, manage tables, and monitor performance</p>
+        
+        {/* Cue Ball Animation */}
+        <div className="relative mx-auto mb-4" style={{ width: '100px', height: '20px' }}>
+          <div className="absolute w-4 h-4 bg-white rounded-full animate-cue-ball shadow-lg"></div>
+        </div>
+        <p className="text-sm opacity-75">Setting up your dashboard...</p>
       </div>
     </div>
   );

@@ -37,8 +37,15 @@ export default function Transactions() {
   const filteredTransactions = transactions?.filter(transaction => {
     if (transactionType === "payments") return transaction.type === "payment";
     if (transactionType === "withdrawals") return transaction.type === "withdrawal";
+    if (transactionType === "all" || transactionType === "") return true;
     return true;
   }) || [];
+
+  // Filter by selected table
+  const finalFilteredTransactions = filteredTransactions.filter(transaction => {
+    if (selectedTable === "all" || selectedTable === "") return true;
+    return transaction.deviceId === selectedTable;
+  });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -98,7 +105,7 @@ export default function Transactions() {
                     <SelectValue placeholder="All Tables" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Tables</SelectItem>
+                    <SelectItem value="all">All Tables</SelectItem>
                     {poolTables?.map((table) => (
                       <SelectItem key={table.deviceId} value={table.deviceId}>
                         {table.name}
@@ -115,7 +122,7 @@ export default function Transactions() {
                     <SelectValue placeholder="All Types" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="payments">Game Payments</SelectItem>
                     <SelectItem value="withdrawals">Withdrawals</SelectItem>
                   </SelectContent>
@@ -145,7 +152,7 @@ export default function Transactions() {
                   </div>
                 ))}
               </div>
-            ) : filteredTransactions.length === 0 ? (
+            ) : finalFilteredTransactions.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">No transactions found</p>
               </div>
@@ -162,7 +169,7 @@ export default function Transactions() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {filteredTransactions.map((transaction) => (
+                    {finalFilteredTransactions.map((transaction) => (
                       <tr key={transaction.id} className="hover:bg-muted/50">
                         <td className="p-3">
                           <div className="text-sm">
