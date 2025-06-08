@@ -96,9 +96,6 @@ export default function Login() {
           </form>
           
           <div className="mt-6 text-center space-y-3">
-            <p className="text-sm text-muted-foreground">
-              Demo Account: ACC001 / password123
-            </p>
             <div className="pt-3 border-t border-border">
               <p className="text-xs text-muted-foreground">
                 Need help? Contact us at
