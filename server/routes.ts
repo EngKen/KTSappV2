@@ -10,7 +10,8 @@ const LoginSchema = z.object({
 
 const WithdrawSchema = z.object({
   accountNumber: z.string(),
-  amount: z.number().min(100)
+  amount: z.number().min(100),
+  password: z.string()
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -155,7 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create withdrawal
   app.post("/api/withdrawals", async (req, res) => {
     try {
-      const { accountNumber, amount } = WithdrawSchema.parse(req.body);
+      const { accountNumber, amount, password } = WithdrawSchema.parse(req.body);
       
       // Check if user exists
       const user = await storage.getUserByUsername(accountNumber);
@@ -177,7 +178,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const withdrawal = await storage.createWithdrawal({ accountNumber, amount });
+      const withdrawal = await storage.createWithdrawal({ accountNumber, amount, password });
       
       return res.json({
         success: true,
@@ -189,6 +190,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ 
           success: false, 
           message: "Invalid withdrawal data" 
+        });
+      }
+      if (error.message === "Invalid password") {
+        return res.status(401).json({ 
+          success: false, 
+          message: "Invalid password. Please check your credentials." 
         });
       }
       return res.status(500).json({ 

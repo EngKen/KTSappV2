@@ -12,6 +12,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { poolTableAPI } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 interface WithdrawModalProps {
   isOpen: boolean;

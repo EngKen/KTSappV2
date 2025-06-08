@@ -41,7 +41,10 @@ export class MemStorage implements IStorage {
     const sampleUser: User = {
       id: 1,
       username: "ACC001",
-      password: "password123"
+      password: "password123",
+      name: "Joseph Kiprotich",
+      email: "joseph@kentronicssolutions.com",
+      phoneNumber: "+254700123456"
     };
     this.users.set(1, sampleUser);
 
@@ -124,7 +127,12 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      email: insertUser.email || null,
+      phoneNumber: insertUser.phoneNumber || null
+    };
     this.users.set(id, user);
     return user;
   }
@@ -155,7 +163,36 @@ export class MemStorage implements IStorage {
       });
   }
 
-  async createWithdrawal(withdrawal: { accountNumber: string; amount: number }): Promise<Withdrawal> {
+  async validateUserPassword(username: string, password: string): Promise<boolean> {
+    const user = await this.getUserByUsername(username);
+    return user ? user.password === password : false;
+  }
+
+  async createSupportTicket(ticket: InsertSupportTicket): Promise<SupportTicket> {
+    const ticketId = `TKT${Date.now()}${Math.floor(Math.random() * 1000)}`;
+    const newTicket: SupportTicket = {
+      id: this.currentTicketId++,
+      ticketId,
+      accountNumber: ticket.accountNumber,
+      userEmail: ticket.userEmail,
+      subject: ticket.subject,
+      message: ticket.message,
+      status: ticket.status || "open",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    this.supportTickets.set(ticketId, newTicket);
+    return newTicket;
+  }
+
+  async createWithdrawal(withdrawal: { accountNumber: string; amount: number; password: string }): Promise<Withdrawal> {
+    // Validate password first
+    const isValidPassword = await this.validateUserPassword(withdrawal.accountNumber, withdrawal.password);
+    if (!isValidPassword) {
+      throw new Error("Invalid password");
+    }
+
     const withdrawalId = `WD${Date.now()}${Math.floor(Math.random() * 1000)}`;
     const newWithdrawal: Withdrawal = {
       id: this.withdrawals.size + 1,
